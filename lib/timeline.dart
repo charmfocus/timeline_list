@@ -22,6 +22,7 @@ class TimelineProperties {
 }
 
 class Timeline extends StatelessWidget {
+  final List<TimelineModel> models;
   final ScrollController controller;
   final IndexedTimelineModelBuilder itemBuilder;
   final int itemCount;
@@ -31,66 +32,103 @@ class Timeline extends StatelessWidget {
   final bool shrinkWrap;
   final bool primary;
   final bool reverse;
+  final bool fullHeight;
 
   /// Creates a scrollable timeline of widgets that are created befirehand.
   /// Note: [TimelineModel.icon]'s size is ignored when `position` is not
   /// [TimelinePosition.Center].
-  Timeline(
-      {List<TimelineModel> children,
-        Color lineColor,
-        double lineWidth,
-        double iconSize,
-        this.controller,
-        this.position = TimelinePosition.Center,
-        this.physics,
-        this.shrinkWrap = false,
-        this.primary = false,
-        this.reverse = false})
-      : itemCount = children.length,
+  Timeline({
+    this.models,
+    Color lineColor,
+    double lineWidth,
+    double iconSize,
+    this.controller,
+    this.position = TimelinePosition.Center,
+    this.physics,
+    this.shrinkWrap = false,
+    this.primary = false,
+    this.reverse = false,
+    this.fullHeight = false,
+  })  : itemCount = models.length,
         properties = TimelineProperties(
             lineColor: lineColor, lineWidth: lineWidth, iconSize: iconSize),
-        itemBuilder = ((BuildContext context, int i) => children[i]);
+        itemBuilder = ((BuildContext context, int i) => models[i]);
+
+  Timeline.column({
+    @required this.models,
+    Color lineColor,
+    double lineWidth,
+    double iconSize,
+    this.controller,
+    this.position = TimelinePosition.Center,
+    this.physics,
+    this.shrinkWrap = false,
+    this.primary = false,
+    this.reverse = false,
+    this.fullHeight = true,
+  })  : itemCount = models.length,
+        properties = TimelineProperties(
+            lineColor: lineColor, lineWidth: lineWidth, iconSize: iconSize),
+        itemBuilder = ((BuildContext context, int i) => models[i]);
 
   /// Creates a scrollable timeline of widgets that are created on demand.
   /// Note: `itemBuilder` position and [TimelineModel.icon]'s size is ignored
   /// when `position` is not [TimelinePosition.Center].
-  Timeline.builder(
-      {@required this.itemBuilder,
-        this.itemCount,
-        this.controller,
-        Color lineColor,
-        double lineWidth,
-        double iconSize,
-        this.position = TimelinePosition.Center,
-        this.physics,
-        this.shrinkWrap = false,
-        this.primary = false,
-        this.reverse = false})
-      : properties = TimelineProperties(
-      lineColor: lineColor, lineWidth: lineWidth, iconSize: iconSize);
+  Timeline.builder({
+    @required this.itemBuilder,
+    this.itemCount,
+    this.controller,
+    Color lineColor,
+    double lineWidth,
+    double iconSize,
+    this.position = TimelinePosition.Center,
+    this.physics,
+    this.shrinkWrap = false,
+    this.primary = false,
+    this.reverse = false,
+    this.fullHeight = false,
+    this.models,
+  }) : properties = TimelineProperties(
+            lineColor: lineColor, lineWidth: lineWidth, iconSize: iconSize);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    if (fullHeight) {
+      List<Widget> children = models
+          .asMap()
+          .map((i, model) {
+            return MapEntry(i, _buildItem(context, i));
+          })
+          .values
+          .toList();
+      return Column(
+        children: children,
+      );
+    } else {
+      return ListView.builder(
         physics: physics,
         shrinkWrap: shrinkWrap,
         itemCount: itemCount,
         controller: controller,
         reverse: reverse,
         primary: primary,
-        itemBuilder: (context, i) {
-          final TimelineModel model = itemBuilder(context, i);
-          model.isFirst = reverse ? i == (itemCount - 1) : i == 0;
-          model.isLast = reverse ? i == 0 : i == (itemCount - 1);
-          switch (position) {
-            case TimelinePosition.Left:
-              return TimelineItemLeft(properties: properties, model: model);
-            case TimelinePosition.Right:
-              return TimelineItemRight(properties: properties, model: model);
-            case TimelinePosition.Center:
-            default:
-              return TimelineItemCenter(properties: properties, model: model);
-          }
-        });
+        itemBuilder: _buildItem,
+      );
+    }
+  }
+
+  Widget _buildItem(BuildContext context, int index) {
+    final TimelineModel model = itemBuilder(context, index);
+    model.isFirst = reverse ? index == (itemCount - 1) : index == 0;
+    model.isLast = reverse ? index == 0 : index == (itemCount - 1);
+    switch (position) {
+      case TimelinePosition.Left:
+        return TimelineItemLeft(properties: properties, model: model);
+      case TimelinePosition.Right:
+        return TimelineItemRight(properties: properties, model: model);
+      case TimelinePosition.Center:
+      default:
+        return TimelineItemCenter(properties: properties, model: model);
+    }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:timeline_list/timeline.dart';
 import 'package:timeline_list/timeline_model.dart';
 
@@ -95,7 +94,7 @@ void main() {
   testWidgets('Empty timeline', (WidgetTester tester) async {
     await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
-        child: Timeline(children: <TimelineModel>[])));
+        child: Timeline(models: <TimelineModel>[])));
 
     expect(find.byType(Timeline), findsOneWidget);
   });
@@ -113,7 +112,7 @@ void main() {
   testWidgets('Single item size', (WidgetTester tester) async {
     await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
-        child: Timeline(children: <TimelineModel>[
+        child: Timeline(models: <TimelineModel>[
           TimelineModel(Container(key: key, width: 200.0, height: 200.0))
         ])));
 
@@ -129,7 +128,7 @@ void main() {
     await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
         child: Timeline(
-          children: <TimelineModel>[
+          models: <TimelineModel>[
             TimelineModel(Text("1")),
             TimelineModel(Text("2"))
           ],
@@ -144,7 +143,7 @@ void main() {
     await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
         child: Timeline(
-          children: <TimelineModel>[
+          models: <TimelineModel>[
             TimelineModel(Container(),
                 icon: Icon(
                   Icons.add,
@@ -177,7 +176,7 @@ void main() {
     await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
         child: Timeline(
-          children: <TimelineModel>[TimelineModel(Container())],
+          models: <TimelineModel>[TimelineModel(Container())],
         )));
 
     expect(find.widgetWithIcon(Object, Icons.add), findsNothing);
@@ -188,7 +187,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Timeline(
           position: TimelinePosition.Center,
-          children: <TimelineModel>[
+          models: <TimelineModel>[
             TimelineModel(Container(),
                 icon: Icon(Icons.add), position: TimelineItemPosition.left)
           ],
@@ -204,7 +203,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Timeline(
           position: TimelinePosition.Center,
-          children: <TimelineModel>[
+          models: <TimelineModel>[
             TimelineModel(Container(),
                 icon: Icon(Icons.add), position: TimelineItemPosition.right)
           ],
@@ -220,7 +219,7 @@ void main() {
   testWidgets('Icon size', (WidgetTester tester) async {
     const DEFAULT_ICON_SIZE = 24.0;
     const ICON_SIZE = DEFAULT_ICON_SIZE + 1.0;
-    final children = <TimelineModel>[
+    final models = <TimelineModel>[
       TimelineModel(Container(),
           icon: Icon(
             Icons.add,
@@ -230,22 +229,21 @@ void main() {
 
     await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
-        child: Timeline(position: TimelinePosition.Left, children: children)));
+        child: Timeline(position: TimelinePosition.Left, models: models)));
 
     RenderBox box = tester.renderObject(find.byIcon(Icons.add));
     expect(box.size.width, DEFAULT_ICON_SIZE);
 
     await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
-        child: Timeline(position: TimelinePosition.Right, children: children)));
+        child: Timeline(position: TimelinePosition.Right, models: models)));
 
     box = tester.renderObject(find.byIcon(Icons.add));
 
     expect(box.size.width, DEFAULT_ICON_SIZE);
     await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
-        child:
-            Timeline(position: TimelinePosition.Center, children: children)));
+        child: Timeline(position: TimelinePosition.Center, models: models)));
 
     box = tester.renderObject(find.byIcon(Icons.add));
     expect(box.size.width, ICON_SIZE);
@@ -257,7 +255,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Timeline(
           position: TimelinePosition.Left,
-          children: <TimelineModel>[
+          models: <TimelineModel>[
             TimelineModel(Container(), position: TimelineItemPosition.right)
           ],
         )));
@@ -272,7 +270,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Timeline(
           position: TimelinePosition.Right,
-          children: <TimelineModel>[
+          models: <TimelineModel>[
             TimelineModel(Container(), position: TimelineItemPosition.left)
           ],
         )));
@@ -292,7 +290,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Timeline(
           position: TimelinePosition.Center,
-          children: <TimelineModel>[
+          models: <TimelineModel>[
             TimelineModel(Container(),
                 icon: Icon(
                   Icons.add,
