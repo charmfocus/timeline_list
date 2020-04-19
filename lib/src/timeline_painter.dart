@@ -9,9 +9,9 @@ class TimelineBoxDecoration extends Decoration {
   final bool isLast;
   final TimelinePosition timelinePosition;
 
-  static const double DEFAULT_DOT_SIZE = 12.0;
-  static const double DEFAULT_ICON_SIZE = 24.0; // default icon size
-  static const double LINE_GAP = 6.0;
+  static const double DEFAULT_DOT_SIZE = 6.0;
+  static const double DEFAULT_ICON_SIZE = 12.0; // default icon size
+  static const double LINE_GAP = 3.0;
 
   TimelineBoxDecoration(
       {this.properties,
